@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-@6uj6anw0@9#45^x^b&y0gzxww_cw^z$@$i*_-r03*xjx4d#+o
 DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.1.14',
-'127.0.0.1','hotelbookingapp23.herokuapp.com/'
+'127.0.0.1','hotelbookingapp23.herokuapp.com'
                  ]
 
 
