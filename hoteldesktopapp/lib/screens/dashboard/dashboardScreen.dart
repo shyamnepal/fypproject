@@ -1,0 +1,16 @@
+// ignore_for_file: file_names
+
+import 'package:flutter/material.dart';
+
+class DashboardScreen extends StatelessWidget {
+  const DashboardScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Container(
+        color: Colors.green,
+      ),
+    );
+  }
+}
