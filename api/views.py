@@ -10,6 +10,7 @@ from .serializer import SignUpSerializers, UserRegisterSerializer, \
 from rest_framework.response import Response
 from rest_framework import  status
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated
 
 
 @api_view(['GET'])
@@ -53,6 +54,24 @@ def User_logout(request):
     return Response('User Logged out successfully')
 
 
+
+@api_view(['PUT'])
+def updatehotelInfo(request, pk):
+    hotel_details=Hotels.objects.get(pk=pk)
+    serilizers=hotelSerializer(hotel_details, data=request.data)
+    if serilizers.is_valid():
+        serilizers.save()
+        return Response(serilizers.data)
+    return Response(serilizers.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['DELETE'])
+def deleateHotelInfo(request,pk):
+    hotel_details=Hotels.objects.get(pk=pk)
+    hotel_details.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
 class RegisterAPIView(APIView):
     serializers = UserRegisterSerializer
 
@@ -72,15 +91,15 @@ class RegisterAPIView(APIView):
         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class LogOutAPIView(APIView):
-    def post(self, request, format=None):
-        try:
-            refresh_token = request.data.get('refresh_token')
-            token_obj = RefreshToken(refresh_token)
-            token_obj.blacklist()
-            return Response(status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+# class LogOutAPIView(APIView):
+#     def post(self, request, format=None):
+#         try:
+#             refresh_token = request.data.get('refresh_token')
+#             token_obj = RefreshToken(refresh_token)
+#             token_obj.blacklist()
+#             return Response(status=status.HTTP_200_OK)
+#         except Exception as e:
+#             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class profiles(APIView):
@@ -97,6 +116,7 @@ class profiles(APIView):
         return Response(serializer.data)
 
 class HotelsInfo(APIView):
+    #permission_classes=[IsAuthenticated]
     def post(self, request):
         serializers = hotelSerializer(data=request.data)
         if serializers.is_valid():
@@ -109,9 +129,10 @@ class HotelsInfo(APIView):
         serializers = hotelSerializer(hotel_details, many=True)
         return Response(serializers.data)
 
+   
 
 class HotelsRoomInfo(APIView):
-
+    #permission_classes=[IsAuthenticated]
     def post(self, request):
         serializers = roomInfoSerializer(data=request.data)
         if serializers.is_valid():
@@ -121,5 +142,7 @@ class HotelsRoomInfo(APIView):
 
     def get(self, request):
         room_details = Rooms_info.objects.all()
-        serializers = hotelSerializer(room_details, many=True)
+        serializers = roomInfoSerializer(room_details, many=True)
         return Response(serializers.data)
+ 
+    
