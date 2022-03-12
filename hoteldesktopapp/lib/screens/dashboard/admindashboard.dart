@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:hoteldesktopapp/screens/dashboard/dashboardScreen.dart';
+import 'package:hoteldesktopapp/components/side_menu.dart';
+import 'package:hoteldesktopapp/constant/responsive.dart';
+import 'package:hoteldesktopapp/screens/HotelInfo.dart';
 
 class AdminDashBoard extends StatefulWidget {
   const AdminDashBoard({Key? key}) : super(key: key);
@@ -17,40 +19,12 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
       body: SafeArea(
         child: Row(
           children: [
-            Expanded(
-                child: Container(
-              color: Colors.white,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    ListTile(
-                      leading: Icon(
-                        Icons.dashboard,
-                        size: 16,
-                      ),
-                      title: Text('Dashboard'),
-                    ),
-                    ListTile(
-                      leading: Icon(
-                        Icons.dashboard,
-                        size: 16,
-                      ),
-                      title: Text('Dashboard'),
-                    ),
-                    ListTile(
-                      leading: Icon(
-                        Icons.dashboard,
-                        size: 16,
-                      ),
-                      title: Text('Dashboard'),
-                    )
-                  ],
-                ),
-              ),
-            )),
+            if (Responsive.isDesktop(context)) Expanded(child: SlideMenu()),
             Expanded(
               flex: 6,
-              child: DashboardScreen(),
+              child: Container(
+                color: Colors.green,
+              ),
             ),
           ],
         ),
