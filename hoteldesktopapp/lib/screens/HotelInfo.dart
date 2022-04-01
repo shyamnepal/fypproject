@@ -41,6 +41,16 @@ class _HotelInfoState extends State<HotelInfo> {
   Uint8List? imagevalue;
   String? imagename;
 
+  TextEditingController _edithotelName = TextEditingController();
+
+  TextEditingController _editZipCode = TextEditingController();
+
+  TextEditingController _editcity = TextEditingController();
+
+  TextEditingController _editstate = TextEditingController();
+
+  TextEditingController _edithotelLocation = TextEditingController();
+
   Future featchHotelInfo() async {
     final response =
         await http.get(Uri.parse('http://127.0.0.1:8000/api/hotel-details/'));
@@ -409,8 +419,9 @@ class _HotelInfoState extends State<HotelInfo> {
                             (BuildContext context, AsyncSnapshot snapShot) {
                           if (snapShot.hasData) {
                             final hoteinfodata = snapShot.data;
-
-                            print(hoteinfodata[1]['hotelName']);
+                            print(
+                                'sdfjldfjfdkljf ${hoteinfodata[1]['hotelName']}');
+                            print('${hoteinfodata[1]['hotelID']}');
 
                             return Column(
                               children: [
@@ -446,11 +457,337 @@ class _HotelInfoState extends State<HotelInfo> {
                                             children: [
                                               IconButton(
                                                   onPressed: () {
-                                                    setState(() {});
+                                                    deleteHotelInfo(
+                                                        hoteinfodata[i]
+                                                                ['hotelID']
+                                                            .toString());
                                                   },
                                                   icon: Icon(Icons.delete)),
                                               IconButton(
-                                                  onPressed: () {},
+                                                  onPressed: () {
+                                                    showonedata(hoteinfodata[i]
+                                                            ['hotelID']
+                                                        .toString());
+                                                    var hotelName =
+                                                        hoteinfodata[i]
+                                                            ["hotelName"];
+                                                    var zipCode =
+                                                        hoteinfodata[i]
+                                                                ["zipCode"]
+                                                            .toString();
+                                                    var city =
+                                                        hoteinfodata[i]["city"];
+                                                    var state = hoteinfodata[i]
+                                                        ["state"];
+                                                    var hotel_location =
+                                                        hoteinfodata[i]
+                                                            ["hotel_location"];
+                                                    var id = hoteinfodata[i]
+                                                        ["hotelID"];
+
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return Dialog(
+                                                            child: Container(
+                                                              height: 550,
+                                                              width: 400,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .white,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            20),
+                                                              ),
+                                                              child: Column(
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .only(
+                                                                        top:
+                                                                            10),
+                                                                    child: Text(
+                                                                      'please uplaod the hotel information',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              15,
+                                                                          fontWeight:
+                                                                              FontWeight.w500),
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            20,
+                                                                        right:
+                                                                            20,
+                                                                        top:
+                                                                            10),
+                                                                    child:
+                                                                        Container(
+                                                                      decoration:
+                                                                          const BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.all(Radius.circular(15)),
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                      child:
+                                                                          TextFormField(
+                                                                        initialValue:
+                                                                            hotelName,
+                                                                        onChanged:
+                                                                            (value) =>
+                                                                                hotelName = value,
+                                                                        decoration: InputDecoration(
+                                                                            hintText: 'hotel name',
+                                                                            hintStyle: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
+                                                                            suffixIcon: Icon(Icons.close),
+                                                                            suffixStyle: TextStyle(color: Colors.black),
+                                                                            enabledBorder: OutlineInputBorder(
+                                                                                borderSide: BorderSide(
+                                                                                  color: Color(0xffeceff3),
+                                                                                ),
+                                                                                borderRadius: BorderRadius.all(Radius.circular(15))),
+                                                                            focusColor: Colors.black,
+                                                                            focusedBorder: OutlineInputBorder(
+                                                                                borderSide: BorderSide(
+                                                                                  color: Color(0xffeceff3),
+                                                                                ),
+                                                                                borderRadius: BorderRadius.all(Radius.circular(15)))),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+
+                                                                  //zipcode textfeild
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            20,
+                                                                        right:
+                                                                            20,
+                                                                        top:
+                                                                            10),
+                                                                    child:
+                                                                        Container(
+                                                                      decoration:
+                                                                          const BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.all(Radius.circular(15)),
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                      child:
+                                                                          TextFormField(
+                                                                        initialValue:
+                                                                            zipCode,
+                                                                        onChanged:
+                                                                            (value) =>
+                                                                                zipCode = value,
+                                                                        decoration: InputDecoration(
+                                                                            hintText: 'zip Code',
+                                                                            hintStyle: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
+                                                                            suffixIcon: Icon(Icons.close),
+                                                                            suffixStyle: TextStyle(color: Colors.black),
+                                                                            enabledBorder: OutlineInputBorder(
+                                                                                borderSide: BorderSide(
+                                                                                  color: Color(0xffeceff3),
+                                                                                ),
+                                                                                borderRadius: BorderRadius.all(Radius.circular(15))),
+                                                                            focusColor: Colors.black,
+                                                                            focusedBorder: OutlineInputBorder(
+                                                                                borderSide: BorderSide(
+                                                                                  color: Color(0xffeceff3),
+                                                                                ),
+                                                                                borderRadius: BorderRadius.all(Radius.circular(15)))),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+
+                                                                  //city
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            20,
+                                                                        right:
+                                                                            20,
+                                                                        top:
+                                                                            10),
+                                                                    child:
+                                                                        Container(
+                                                                      decoration:
+                                                                          const BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.all(Radius.circular(15)),
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                      child:
+                                                                          TextFormField(
+                                                                        initialValue:
+                                                                            city,
+                                                                        onChanged:
+                                                                            (value) =>
+                                                                                city = value,
+                                                                        decoration: InputDecoration(
+                                                                            hintText: 'City',
+                                                                            hintStyle: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
+                                                                            suffixIcon: Icon(Icons.close),
+                                                                            suffixStyle: TextStyle(color: Colors.black),
+                                                                            enabledBorder: OutlineInputBorder(
+                                                                                borderSide: BorderSide(
+                                                                                  color: Color(0xffeceff3),
+                                                                                ),
+                                                                                borderRadius: BorderRadius.all(Radius.circular(15))),
+                                                                            focusColor: Colors.black,
+                                                                            focusedBorder: OutlineInputBorder(
+                                                                                borderSide: BorderSide(
+                                                                                  color: Color(0xffeceff3),
+                                                                                ),
+                                                                                borderRadius: BorderRadius.all(Radius.circular(15)))),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+
+                                                                  //state
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            20,
+                                                                        right:
+                                                                            20,
+                                                                        top:
+                                                                            10),
+                                                                    child:
+                                                                        Container(
+                                                                      decoration:
+                                                                          const BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.all(Radius.circular(15)),
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                      child:
+                                                                          TextFormField(
+                                                                        initialValue:
+                                                                            state,
+                                                                        onChanged:
+                                                                            (value) =>
+                                                                                state = value,
+                                                                        decoration: InputDecoration(
+                                                                            hintText: 'State',
+                                                                            hintStyle: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
+                                                                            suffixIcon: Icon(Icons.close),
+                                                                            suffixStyle: TextStyle(color: Colors.black),
+                                                                            enabledBorder: OutlineInputBorder(
+                                                                                borderSide: BorderSide(
+                                                                                  color: Color(0xffeceff3),
+                                                                                ),
+                                                                                borderRadius: BorderRadius.all(Radius.circular(15))),
+                                                                            focusColor: Colors.black,
+                                                                            focusedBorder: OutlineInputBorder(
+                                                                                borderSide: BorderSide(
+                                                                                  color: Color(0xffeceff3),
+                                                                                ),
+                                                                                borderRadius: BorderRadius.all(Radius.circular(15)))),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+
+                                                                  //hotel locatoin
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            20,
+                                                                        right:
+                                                                            20,
+                                                                        top:
+                                                                            10),
+                                                                    child:
+                                                                        Container(
+                                                                      decoration:
+                                                                          const BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.all(Radius.circular(15)),
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                      child:
+                                                                          TextFormField(
+                                                                        initialValue:
+                                                                            hotel_location,
+                                                                        onChanged:
+                                                                            (value) =>
+                                                                                hotel_location = value,
+                                                                        decoration: InputDecoration(
+                                                                            hintText: 'Hotel Location',
+                                                                            hintStyle: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
+                                                                            suffixIcon: Icon(Icons.close),
+                                                                            suffixStyle: TextStyle(color: Colors.black),
+                                                                            enabledBorder: OutlineInputBorder(
+                                                                                borderSide: BorderSide(
+                                                                                  color: Color(0xffeceff3),
+                                                                                ),
+                                                                                borderRadius: BorderRadius.all(Radius.circular(15))),
+                                                                            focusColor: Colors.black,
+                                                                            focusedBorder: OutlineInputBorder(
+                                                                                borderSide: BorderSide(
+                                                                                  color: Color(0xffeceff3),
+                                                                                ),
+                                                                                borderRadius: BorderRadius.all(Radius.circular(15)))),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+
+                                                                  Padding(
+                                                                    padding: EdgeInsets
+                                                                        .only(
+                                                                            top:
+                                                                                20),
+                                                                    child:
+                                                                        SizedBox(
+                                                                      width:
+                                                                          150,
+                                                                      height:
+                                                                          50,
+                                                                      child:
+                                                                          ElevatedButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          UpdateHotelInfo(
+                                                                              id,
+                                                                              hotelName,
+                                                                              zipCode,
+                                                                              city,
+                                                                              state,
+                                                                              hotel_location);
+                                                                          Navigator.push(
+                                                                              context,
+                                                                              MaterialPageRoute(builder: (context) => HotelInfo()));
+                                                                        },
+                                                                        child: const Text(
+                                                                            'submit'),
+                                                                        style: ElevatedButton.styleFrom(
+                                                                            primary:
+                                                                                const Color(0xff40cd7d),
+                                                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          );
+                                                        });
+                                                  },
                                                   icon: Icon(Icons.edit))
                                             ],
                                           ),
@@ -498,10 +835,31 @@ class _HotelInfoState extends State<HotelInfo> {
       state: _state.text,
       hotel_location: _hotelLocation.text,
     );
-    print(model.toJson());
 
     http.Response response =
         await http.post(Uri.parse(APIURL), body: model.toJson());
+    if (response.statusCode == 200) {
+      print("value add");
+    } else {
+      print("exception occor $response");
+      print(response.statusCode);
+    }
+  }
+
+  Future UpdateHotelInfo(String id, String hotelName, String zipCode,
+      String city, String state, String hotel_location) async {
+    String APIURL = "http://127.0.0.1:8000/api/hotel-details/";
+
+    modelHotelInfo model = modelHotelInfo(
+      hotelName: hotelName,
+      zipCode: zipCode,
+      city: city,
+      state: state,
+      hotel_location: hotel_location,
+    );
+
+    http.Response response =
+        await http.put(Uri.parse(APIURL + id), body: model.toJson());
     if (response.statusCode == 200) {
       print("value add");
     } else {
@@ -536,7 +894,24 @@ class _HotelInfoState extends State<HotelInfo> {
     String APIURL = "http://127.0.0.1:8000/api/hotel-delete/";
 
     http.Response response = await http.delete(Uri.parse(APIURL + id));
-    if (response.statusCode == 200) {
+    print(APIURL + id);
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HotelInfo()));
+      print("sucessfully delete the data from the database");
+    } else {
+      print("exception occor $response");
+      print(response.statusCode);
+    }
+  }
+
+  Future showonedata(String id) async {
+    String APIURL = "http://127.0.0.1:8000/api/hotel-data/";
+    http.Response response = await http.get(Uri.parse(APIURL + id));
+    print(APIURL + id);
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => HotelInfo()));
       print("sucessfully delete the data from the database");
     } else {
       print("exception occor $response");
