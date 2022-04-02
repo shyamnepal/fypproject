@@ -1,4 +1,11 @@
+from enum import unique
+from operator import mod
+from platform import java_ver
+from pyexpat import model
+from statistics import mode
+from sys import flags
 from django.db import models
+from django.contrib.auth.models import User
 import uuid
 
 class Signup(models.Model):
@@ -44,3 +51,85 @@ class Rooms_info(models.Model):
 
 
 
+class customer_details(models.Model):
+    PhoneNumber=models.BigIntegerField(primary_key=True,editable=True)
+    firstName=models.CharField(max_length=60, null=False, blank=False)
+    lastName=models.CharField(max_length=60, null=False, blank=False)
+    city=models.CharField(max_length=30, null=False, blank=False)
+    state = models.CharField(max_length=30, null=False, blank=False)
+    
+    def __str__(self):
+        return self.firstName
+
+class customer_info(models.Model):
+    userid=models.ForeignKey(User,null=True, on_delete=models.CASCADE)
+    customer_id=models.AutoField(primary_key=True,editable=False)
+    phoneNumber=models.ForeignKey(customer_details,null=True,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.customer_id
+
+class Reservation(models.Model):
+
+    reservationNumber=models.AutoField(primary_key=True,editable=False)
+    CustomerId=models.ForeignKey(customer_info,null=True,on_delete=models.CASCADE)
+    checkInDateTime=models.DateField( null=False, blank=False)
+    checkOutDateTime=models.DateField( null=False, blank=False)
+    reservationGuest = models.CharField(max_length=30, null=False, blank=False)
+    numberOfGuest=models.IntegerField( null=False, blank=False)
+    def __str__(self):
+        return self.reservationGuest
+
+
+class customer(models.Model):
+    class Meta:
+        unique_together=(('customerId', 'reservationNumber'),)
+    customerId=models.ForeignKey(customer_info,null=True,on_delete=models.CASCADE)
+    reservationNumber=models.ForeignKey(Reservation,null=True,on_delete=models.CASCADE)
+    def __str__(self):
+        return self.customerId
+
+class billingInfo(models.Model):
+    class Meta:
+        unique_together=(('billingId','reservationNumber'),)
+
+    billingId=models.AutoField(primary_key=True,editable=False)
+    reservationNumber=models.ForeignKey(Reservation,null=True,on_delete=models.CASCADE)
+    totalBilling = models.FloatField(null=False, blank=False)
+    paymentDate = models.DateField( null=False, blank=False)
+    
+
+    def __str__(self):
+        return self.billingId
+
+
+
+class services(models.Model):
+    serviceId=models.AutoField(primary_key=True, editable=False)
+    serviceName = models.CharField(max_length=30, null=False, blank=False)
+    price = models.FloatField(null=False, blank=False)
+
+    def __str__(self):
+        return self.serviceName
+
+class service_info(models.Model):
+    class Meta:
+        unique_together=(('serviceId','hotelId','reservationNumber'),)
+
+    serviceId=models.ForeignKey(services,null=True,on_delete=models.CASCADE)
+    hotelId=models.ForeignKey(Hotels,null=True,on_delete=models.CASCADE)
+    reservationNumber=models.ForeignKey(Reservation,null=True,on_delete=models.CASCADE)
+    qunatity=models.IntegerField(null=False, editable=False)
+    totalServicePrice = models.FloatField(null=False, blank=False)
+
+    def __str__(self):
+        return self.totalServicePrice
+class rooms(models.Model):
+    class Meta:
+        unique_together=(('roomNumber','hotelId','reservationNumber'),)
+
+    roomNumber=models.ForeignKey(Rooms_info,null=True,on_delete=models.CASCADE)
+    hotelId=models.ForeignKey(Hotels,null=True,on_delete=models.CASCADE)
+    reservationNumber=models.ForeignKey(Reservation,null=True,on_delete=models.CASCADE)
+    def __str__(self):
+        return self.roomNumber

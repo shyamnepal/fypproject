@@ -157,3 +157,12 @@ REST_AUTH_SERIALIZERS = {
 }
 MEDIA_URL='/media/'
 MEDIA_ROOT= os.path.join(BASE_DIR,"media")
+SIMPLE_JWT = {
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'UPDATE_LAST_LOGIN': False,
+}
+
+
+#SMTP Configuration 
+EMAIL_BACKEND=''
