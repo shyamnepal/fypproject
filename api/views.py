@@ -269,3 +269,4 @@ def registerUpdate(request, pk):
         serilizers.save()
         return Response(serilizers.data)
     return Response(serilizers.errors, status=status.HTTP_400_BAD_REQUEST)
+
