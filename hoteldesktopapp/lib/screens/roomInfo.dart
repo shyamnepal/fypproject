@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hoteldesktopapp/components/side_menu.dart';
@@ -11,6 +12,8 @@ import 'package:hoteldesktopapp/constant/responsive.dart';
 import 'package:http/http.dart' as http;
 
 import 'dart:typed_data';
+
+import 'package:http/http.dart';
 
 class RoomInfo extends StatefulWidget {
   const RoomInfo({Key? key}) : super(key: key);
@@ -31,14 +34,27 @@ class _RoomInfoState extends State<RoomInfo> {
 
   Uint8List? imagevalue;
   String? imagename;
+  Uint8List? imagevalue2;
 
 //   convert() async{
 //      http.Response response = await http.get(
 //     'http://127.0.0.1:8000${hoteinfodata[i]['roomImage']}';
-// );   
+// );
 // response.bodyBytes ,
 
 //   }
+
+  convert(String url, String imagename) async {
+    Uri uri = Uri.parse(url);
+
+    Uint8List bytes = await readBytes(uri);
+    // await FileSaver.instance
+    //     .saveFile(imagename, bytes, 'jpg', mimeType: MimeType.JPEG);
+
+    setState(() {
+      imagevalue = bytes;
+    });
+  }
 
   uploadimagepost() async {
     var request = http.MultipartRequest(
@@ -53,20 +69,18 @@ class _RoomInfoState extends State<RoomInfo> {
           filename: imagename),
     );
     var response = await request.send();
-    print(response.stream);
-    print(response.statusCode);
+
     final res = await http.Response.fromStream(response);
-    print(res.body);
   }
 
   Future editUploadimagepost(
-      String room_number,
-      String room_type,
-      String room_price,
-      String number_of_beds,
-      String hotelID,
-      String roomImage,
-      ) a!sync {
+    String room_number,
+    String room_type,
+    String room_price,
+    String number_of_beds,
+    String hotelID,
+    String roomImage,
+  ) async {
     var request = http.MultipartRequest('PUT',
         Uri.parse('http://127.0.0.1:8000/api/room-update/${room_number}/'));
     //request.headers['Authorization'] ='bearer $authorizationToken';
@@ -75,7 +89,7 @@ class _RoomInfoState extends State<RoomInfo> {
     request.fields['number_of_beds'] = number_of_beds;
     request.fields['hotelID'] = hotelID;
     request.files.add(
-      http.MultipartFile.fromBytes('roomImage', imagevalue,
+      http.MultipartFile.fromBytes('roomImage', imagevalue!,
           filename: roomImage),
     );
     var response = await request.send();
@@ -551,8 +565,7 @@ class _RoomInfoState extends State<RoomInfo> {
                                             // Text(' ${hoteinfodata[i]['roomImage']}'
                                             // )
                                             Image.network(
-                                                'http://127.0.0.1:8000${hoteinfodata[i]['roomImage']}')
-                                                ),
+                                                'http://127.0.0.1:8000${hoteinfodata[i]['roomImage']}')),
                                         DataCell(
                                           Row(
                                             children: [
@@ -590,7 +603,13 @@ class _RoomInfoState extends State<RoomInfo> {
                                                         hoteinfodata[i]
                                                                 ["hotelID"]
                                                             .toString();
-                                                           
+                                                    var imagevalue1 = convert(
+                                                        'http://127.0.0.1:8000${hoteinfodata[i]['roomImage']}',
+                                                        roomImage);
+                                                    print('the data type is: ');
+                                                    print(imagevalue1
+                                                        .runtimeType);
+                                                    print(imagevalue1);
 
                                                     showDialog(
                                                         context: context,
@@ -874,13 +893,13 @@ class _RoomInfoState extends State<RoomInfo> {
                                                                         onPressed:
                                                                             () {
                                                                           editUploadimagepost(
-                                                                              hoteinfodata[i]['room_number'].toString(),
-                                                                              room_type,
-                                                                              room_price,
-                                                                              number_of_beds,
-                                                                              hotelid,
-                                                                              roomImage,
-                                                                            );
+                                                                            hoteinfodata[i]['room_number'].toString(),
+                                                                            room_type,
+                                                                            room_price,
+                                                                            number_of_beds,
+                                                                            hotelid,
+                                                                            roomImage,
+                                                                          );
                                                                           // editUploadimagepost(
                                                                           //     room_number,
                                                                           //     room_type,
