@@ -1,11 +1,16 @@
 from enum import unique
+import imp
 from operator import mod
 from platform import java_ver
 from pyexpat import model
 from statistics import mode
 from sys import flags
+from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import User
+from django.dispatch import receiver
+from django.contrib.auth.models import User, AbstractUser
+from rest_framework.authtoken.models import Token
+from django.db.models.signals import post_save
 import uuid
 
 class Signup(models.Model):
@@ -16,6 +21,27 @@ class Signup(models.Model):
 
     def __str__(self):
         return self.firstName
+
+
+# class User(AbstractUser):
+#     is_admin=models.BooleanField(default=False)
+#     is_customer=models.BooleanField(default=False)
+
+   
+
+# class adminUser(models.Model):
+#     hotelName = models.CharField(max_length=50, null=False, blank=False)
+#     location = models.CharField(max_length=50, null=False, blank=False)
+#     city = models.CharField(max_length=50, null=False, blank=False)
+#     state = models.CharField(max_length=50, null=False, blank=False)
+#     zipcode = models.IntegerField( null=False, blank=False)
+   
+# class customeruser(models.Model):
+#     firstName = models.CharField(max_length=50, null=False, blank=False)
+#     lastName = models.CharField(max_length=50, null=False, blank=False)
+#     email = models.EmailField(max_length=50, null=False, blank=False)
+  
+
 
 class profile(models.Model):
     def namefile(instance, filename):
@@ -46,13 +72,14 @@ class Rooms_info(models.Model):
     room_type = models.CharField(max_length=60, null=False, blank=False)
     room_price = models.FloatField(max_length=200, null=False, blank=False)
     number_of_beds = models.IntegerField( null=False, blank=False)
-    hotelID=models.ForeignKey(Hotels,null=True,on_delete=models.CASCADE)
+    hotelID=models.ForeignKey(Hotels,related_name='tracks',null=True,on_delete=models.CASCADE)
     roomImage=models.ImageField(upload_to=namefile, blank=True)
 
-
+class User(models.Model):
+        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name')
 
 class customer_details(models.Model):
-    PhoneNumber=models.BigIntegerField(primary_key=True,editable=True)
+    PhoneNumber=models.CharField(max_length=60, primary_key=True,editable=True)
     firstName=models.CharField(max_length=60, null=False, blank=False)
     lastName=models.CharField(max_length=60, null=False, blank=False)
     city=models.CharField(max_length=30, null=False, blank=False)
@@ -62,12 +89,12 @@ class customer_details(models.Model):
         return self.firstName
 
 class customer_info(models.Model):
-    userid=models.ForeignKey(User,null=True, on_delete=models.CASCADE)
+    
+    user= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
     customer_id=models.AutoField(primary_key=True,editable=False)
-    phoneNumber=models.ForeignKey(customer_details,null=True,on_delete=models.CASCADE)
+    phoneNumber_i=models.ForeignKey(customer_details,null=True,on_delete=models.CASCADE)
 
-    def __str__(self):
-        return self.customer_id
+   
 
 class Reservation(models.Model):
 

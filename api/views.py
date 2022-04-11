@@ -1,3 +1,4 @@
+from typing import List
 from django.shortcuts import render
 
 # Create your views here.
@@ -13,6 +14,7 @@ from rest_framework import  status
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from rest_framework.authtoken.models import Token
@@ -20,37 +22,91 @@ from rest_framework.parsers import JSONParser
 from django.contrib.auth import authenticate
 from django.http import  JsonResponse
 import jwt, datetime
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
+from rest_framework.filters import SearchFilter
+from rest_framework.generics import ListAPIView
 
 class LoginView(APIView):
-    def post(self, request):
-        username = request.data['username']
-        password = request.data['password']
-
-        user = User.objects.filter(username=username).first()
-
-        if user is None:
-            raise AuthenticationFailed('User not found!')
-
-        if not user.check_password(password):
-            raise AuthenticationFailed('Incorrect password!')
-        
     
+    def post(self, request):
+       
+            username = request.data['username']
+            password = request.data['password']
+            
+            
+            user=authenticate(username=username, password=password)
+            # user = User.objects.filter(username=username).first()
+            
+            if user is None:
+                raise AuthenticationFailed('User not found!')
 
-        payload = {
-            'id': user.id,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
-            'iat': datetime.datetime.utcnow()
-        }
+            if not user.check_password(password):
+                raise AuthenticationFailed('Incorrect password!')
+            
+            is_staff=request.user.is_staff
+          
+            user=User.objects.get(username=request.data['username'])
+            refereh=RefreshToken.for_user(user)
+            return  Response({ 'status':200,
+            'payload':request.data, 
+            'id':user.id, 
+            'referesh': str(refereh),
+            'access': str(refereh.access_token), 'message':'your data is saved'
+        
+        
 
-        token = jwt.encode(payload, 'secret', algorithm='HS256')
+        })
 
-        response = Response()
 
-        response.set_cookie(key='jwt', value=token, httponly=True)
-        response.data = {
-            'jwt': token
-        }
-        return response
+
+
+
+class adminLogin(APIView):
+   def post(self, request):
+       
+            username = request.data['username']
+            password = request.data['password']
+            
+            
+            user=authenticate(username=username, password=password)
+            # user = User.objects.filter(username=username).first()
+            
+            if user is None:
+                raise AuthenticationFailed('User not found!')
+
+            if not user.check_password(password):
+                raise AuthenticationFailed('Incorrect password!')
+            
+            # is_staff=request.user.is_staff
+           
+            user=User.objects.get(username=request.data['username'])
+            refereh=RefreshToken.for_user(user)
+            return  Response({ 'status':200,
+            'payload':request.data,
+            'id':user.id, 
+            'referesh': str(refereh),
+            'access': str(refereh.access_token), 'message':'your data is saved'
+        
+        
+
+        })
+        # payload = {
+        #     'id': user.id,
+        #     'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+        #     'iat': datetime.datetime.utcnow()
+        # }
+
+        # # token = jwt.encode(payload, 'secret', algorithm='HS256')
+       
+
+        # response = Response()
+
+        # response.set_cookie(key='jwt', value=token, httponly=True)
+        # response.data = {
+        #     'jwt': token
+        # }
+        # return response
 
 
 @api_view(['GET'])
@@ -188,7 +244,8 @@ class profiles(APIView):
         return Response(serializer.data)
 
 class HotelsInfo(APIView):
-    #permission_classes=[IsAuthenticated]
+    authentication_classes=[JWTAuthentication]
+    permission_classes=[IsAuthenticated]
     def post(self, request):
         serializers = hotelSerializer(data=request.data)
         if serializers.is_valid():
@@ -204,7 +261,8 @@ class HotelsInfo(APIView):
    
 
 class HotelsRoomInfo(APIView):
-    #permission_classes=[IsAuthenticated]
+    authentication_classes=[JWTAuthentication]
+    permission_classes=[IsAuthenticated]
     def post(self, request):
         serializers = roomInfoSerializer(data=request.data)
         if serializers.is_valid():
@@ -270,3 +328,33 @@ def registerUpdate(request, pk):
         return Response(serilizers.data)
     return Response(serilizers.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+"""Customer info Crude operation"""
+class CustomerInfo(APIView):
+    #permission_classes=[IsAuthenticated]
+    def post(self, request):
+        serializers = customerInfoSerializer(data=request.data)
+        if serializers.is_valid():
+            serializers.save()
+            return Response(serializers.data, status=status.HTTP_201_CREATED)
+        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request):
+        customerinfo = customer_info.objects.all()
+        serializers = customerInfoSerializer(customerinfo, many=True)
+        return Response(serializers.data)
+
+
+class filterRoomList(ListAPIView):
+    queryset=Rooms_info.objects.all()
+    
+    serializer_class=roomInfoSerializer
+    filter_backends =[SearchFilter]
+    search_fields=['number_of_beds','hotelID.hotel_location']
+
+
+# class getuserid(APIView):
+
+#     def perform_create(slef, serilaizer):
+#         return serilaizer.save(user=self.request.user)
+        

@@ -35,7 +35,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name')
+        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name','is_staff')
         
         extra_kwargs = {
             'first_name': {'required': True},
@@ -54,7 +54,9 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             username=validated_data['username'],
             email=validated_data['email'],
             first_name=validated_data['first_name'],
-            last_name=validated_data['last_name']
+            last_name=validated_data['last_name'],
+            is_staff=validated_data['is_staff'],
+          
         )
 
         user.set_password(validated_data['password'])
@@ -74,9 +76,13 @@ class hotelSerializer(serializers.ModelSerializer):
         fields="__all__"
 
 class roomInfoSerializer(serializers.ModelSerializer):
+
     class Meta:
         model=Rooms_info
-        fields="__all__"
+        fields = ('room_number', 'room_type', 'room_price','number_of_beds', 'hotelID', 'roomImage')
+        depth = 1
+
+       
 
 class customerDetailsSerializer(serializers.ModelSerializer):
     class Meta:
