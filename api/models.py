@@ -91,8 +91,8 @@ class customer_details(models.Model):
 class customer_info(models.Model):
     
     user= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
-    customer_id=models.AutoField(primary_key=True,editable=False)
-    phoneNumber_i=models.ForeignKey(customer_details,null=True,on_delete=models.CASCADE)
+    customerId_id=models.AutoField(primary_key=True,editable=False)
+    phoneNumber=models.ForeignKey(customer_details,null=True,on_delete=models.CASCADE,related_name='+')
 
    
 
@@ -107,14 +107,14 @@ class Reservation(models.Model):
     def __str__(self):
         return self.reservationGuest
 
-
 class customer(models.Model):
     class Meta:
         unique_together=(('customerId', 'reservationNumber'),)
-    customerId=models.ForeignKey(customer_info,null=True,on_delete=models.CASCADE)
-    reservationNumber=models.ForeignKey(Reservation,null=True,on_delete=models.CASCADE)
+    customerId=models.ForeignKey(customer_info,null=True,on_delete=models.CASCADE,related_name='+')
+    reservationNumber=models.ForeignKey(Reservation,null=True,on_delete=models.CASCADE,related_name='+')
     def __str__(self):
         return self.customerId
+
 
 class billingInfo(models.Model):
     class Meta:

@@ -29,6 +29,13 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='customer',
+            fields=[
+                 ('customerId', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='api.customer_details')),
+                ('reservationNumber', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='api.Reservation')),
+            ],
+        ),
+        migrations.CreateModel(
             name='Reservation',
             fields=[
                 ('reservationNumber', models.AutoField(editable=False, primary_key=True, serialize=False)),
